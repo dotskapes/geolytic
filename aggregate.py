@@ -136,4 +136,4 @@ def ctool (**attr):
             val += str (k) + ' - ' + str (v) + ' '
         returnList += (str (pname) + ': ' + val) + ''
 
-    barGraphData (attr['file'],​ polygons,​ toGraph)"""
+    barGraphData (attr['file'], polygons, toGraph)"""
