@@ -1,0 +1,3 @@
+** sliders
+Tsunami project move a slider to see which areas will be inundated based on Flickr images
+
