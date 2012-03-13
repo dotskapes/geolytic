@@ -1,0 +1,6 @@
+library(sp)
+data(meuse.riv)
+meuse.lst <- list(Polygons(list(Polygon(meuse.riv)), "meuse.riv"))
+meuse.sr <- SpatialPolygons(meuse.lst)
+plot(meuse.sr, col = "grey")
+title("polygons")
