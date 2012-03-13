@@ -1,6 +1,0 @@
-library(sp)
-data(meuse.grid)
-coordinates(meuse.grid) <- c("x", "y")
-meuse.grid <- as(meuse.grid, "SpatialPixels")
-image(meuse.grid, col = "grey")
-title("grid")
