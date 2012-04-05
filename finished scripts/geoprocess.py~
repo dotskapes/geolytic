@@ -1,0 +1,65 @@
+try:
+    from osgeo import ogr
+except ImportError:
+    import ogr
+
+import os, sys, subprocess
+
+def bufferCalculation(InputFileName,buf):
+
+    #InputFileName  = user
+    OutputFileName = "buffer_" + InputFileName
+    
+    driver = ogr.GetDriverByName('GeoJSON')
+    inputDS = driver.Open(InputFileName, 0)
+    if inputDS is None:
+        print 'Could not open input file',InputFileName
+        sys.exit(1)
+
+    inputLayer = inputDS.GetLayer()
+
+    if os.path.exists(OutputFileName):
+        os.remove(OutputFileName)
+    try:
+        outputDS = driver.CreateDataSource(OutputFileName)
+    except:
+        print 'Could not create output file',OutputFileName
+        sys.exit(1)
+
+    newLayer = outputDS.CreateLayer('TestBuffer', geom_type=ogr.wkbPolygon,srs=inputLayer.GetSpatialRef())
+    if newLayer is None:
+        print "couldn't create layer for buffer in output DS"
+        sys.exit(1)
+
+    newLayerDef = newLayer.GetLayerDefn()
+    featureID = 0
+    oldFeature = inputLayer.GetNextFeature()
+    while oldFeature:
+
+        geometry = oldFeature.GetGeometryRef()
+        bufferz = geometry.Buffer(buf,5)
+        try:
+            newFeature = ogr.Feature(newLayerDef)
+            newFeature.SetGeometry(bufferz)
+            newFeature.SetFID(featureID)
+            newLayer.CreateFeature(newFeature)
+        except:
+            print "error adding buff"
+
+        newFeature.Destroy()
+        oldFeature.Destroy()
+        oldFeature = inputLayer.GetNextFeature()
+        featureID += 1
+
+
+    print 'There are ', featureID, ' input features'
+
+    inputDS.Destroy()
+    outputDS.Destroy()
+
+
+def append(f1,f2):
+    
+   noExt = f1[:-4]
+   subprocess.call(["ogr2ogr","-f","ESRI Shapefile","-append","-nln",noExt,f1,f2,"-update"])
+     
